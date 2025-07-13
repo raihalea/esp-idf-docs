@@ -5,9 +5,7 @@ and error handling in realistic scenarios.
 """
 
 import asyncio
-import subprocess
 import sys
-from typing import Any
 
 import pytest
 import respx
