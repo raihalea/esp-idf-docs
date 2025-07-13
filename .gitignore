@@ -177,3 +177,6 @@ test_*.py
 # Development files
 setup_*.sh
 README_DEVCONTAINER.md
+
+# Claude Code
+.claude/

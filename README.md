@@ -1,54 +1,83 @@
 # ESP-IDF Documentation Explorer MCP Server
 
-ESP-IDFドキュメントを探索するためのMCP (Model Context Protocol) サーバーです。
+A Model Context Protocol (MCP) server for exploring ESP-IDF documentation.
 
-## 機能
+## Features
 
-- **ドキュメント検索**: キーワードでESP-IDFドキュメントを検索
-- **ドキュメント構造の取得**: ドキュメントのディレクトリ構造を確認
-- **ファイル読み取り**: 特定のドキュメントファイルを読み取り
-- **API参照検索**: ESP-IDFコンポーネントのAPI参照を検索
+- **Document Search**: Search ESP-IDF documentation by keywords
+- **Document Structure**: Get directory structure of documentation
+- **File Reading**: Read specific documentation files
+- **API Reference Search**: Find API references for ESP-IDF components
 
-## インストールと実行
+## Installation and Usage
 
-uvxを使用して直接実行できます：
+Run directly with uvx:
 
 ```bash
-uvx esp-idf-docs-mcp
+uvx --from git+https://github.com/your-username/esp-idf-docs-mcp.git esp-idf-docs-mcp
 ```
 
-または、開発環境でインストール：
+For development installation:
 
 ```bash
 uv pip install -e .
 ```
 
-## 使用方法
+## Usage in MCP Clients
 
-MCPクライアント（例：Claude Desktop）の設定に以下を追加：
+Add the following to your MCP client configuration (e.g., Claude Desktop):
 
 ```json
 {
   "mcpServers": {
     "esp-idf-docs": {
       "command": "uvx",
-      "args": ["esp-idf-docs-mcp"],
-      "env": {}
+      "args": [
+        "--from",
+        "git+https://github.com/your-username/esp-idf-docs-mcp.git",
+        "esp-idf-docs-mcp"
+      ],
+      "env": {
+        "ESP_IDF_DOCS_PATH": "/path/to/esp-idf/docs"
+      }
     }
   }
 }
 ```
 
-## 利用可能なツール
+## Usage from DevContainers
+
+See [Simple Usage Guide](README_SIMPLE_USAGE.md) for detailed instructions on using this MCP server from other DevContainer projects.
+
+## Available Tools
 
 ### search_docs
-ESP-IDFドキュメント内でキーワード検索を実行します。
+Search ESP-IDF documentation for keywords (case-insensitive).
 
-### get_doc_structure  
-ドキュメントのディレクトリ構造を取得します。
+**Parameters:**
+- `query` (string): Search query
+
+### get_doc_structure
+Get the directory structure of ESP-IDF documentation.
+
+**Parameters:** None
 
 ### read_doc
-指定したドキュメントファイルの内容を読み取ります。
+Read the contents of a specific documentation file.
+
+**Parameters:**
+- `file_path` (string): Relative path to the documentation file
 
 ### find_api_references
-特定のESP-IDFコンポーネントのAPI参照を検索します。
+Find API references for a specific ESP-IDF component.
+
+**Parameters:**
+- `component` (string): Component or API name to search for
+
+## Environment Variables
+
+- `ESP_IDF_DOCS_PATH`: Path to ESP-IDF documentation directory (defaults to current working directory)
+
+## License
+
+MIT License
