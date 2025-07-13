@@ -15,7 +15,7 @@ A Model Context Protocol (MCP) server for exploring ESP-IDF documentation online
 Run directly with uvx:
 
 ```bash
-uvx --from git+https://github.com/your-username/esp-idf-docs-mcp.git esp-idf-docs-mcp
+uvx --from git+https://github.com/raihalea/esp-idf-docs.git esp-idf-docs-mcp
 ```
 
 For development installation:
@@ -39,7 +39,7 @@ Add the following to your MCP client configuration (e.g., Claude Desktop):
       "command": "uvx",
       "args": [
         "--from",
-        "git+https://github.com/your-username/esp-idf-docs-mcp.git",
+        "git+https://github.com/raihalea/esp-idf-docs.git",
         "esp-idf-docs-mcp"
       ],
       "env": {
@@ -117,10 +117,10 @@ export ESP_IDF_BASE_URL="https://docs.espressif.com/projects/esp-idf"
 
 ```bash
 # Run with specific version
-ESP_IDF_VERSION="v5.1" uvx --from git+https://github.com/your-username/esp-idf-docs-mcp.git esp-idf-docs-mcp
+ESP_IDF_VERSION="v5.1" uvx --from git+https://github.com/raihalea/esp-idf-docs.git esp-idf-docs-mcp
 
 # Run with latest (default)
-uvx --from git+https://github.com/your-username/esp-idf-docs-mcp.git esp-idf-docs-mcp
+uvx --from git+https://github.com/raihalea/esp-idf-docs.git esp-idf-docs-mcp
 ```
 
 ## Testing
