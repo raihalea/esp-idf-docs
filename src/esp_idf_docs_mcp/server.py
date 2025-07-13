@@ -110,9 +110,7 @@ async def main():
                 InitializationOptions(
                     server_name=config.server_name,
                     server_version=config.server_version,
-                    capabilities=server.get_capabilities(
-                        notification_options=None, experimental_capabilities={}
-                    ),
+                    capabilities=server.get_capabilities(),
                 ),
             )
 
