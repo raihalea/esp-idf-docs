@@ -98,7 +98,6 @@ def test_package_structure():
     import esp_idf_docs_mcp.config
     import esp_idf_docs_mcp.exceptions
     import esp_idf_docs_mcp.explorer
-    import esp_idf_docs_mcp.handlers
     import esp_idf_docs_mcp.util
     import esp_idf_docs_mcp.web_explorer
 
