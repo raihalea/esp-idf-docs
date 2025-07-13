@@ -208,7 +208,6 @@ class TestServerStartup:
                 "--help",
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
-                cwd="/home/lea/work/iot/esp-idf-docs",
             )
 
             # Wait for completion with timeout
@@ -236,7 +235,6 @@ class TestServerStartup:
                 "--help",
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
-                cwd="/home/lea/work/iot/esp-idf-docs",
             )
 
             # Wait briefly to see if it starts without immediate errors
