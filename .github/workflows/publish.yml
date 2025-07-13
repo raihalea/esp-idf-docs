@@ -65,7 +65,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    environment: pypipypi
+    environment: release
     permissions:
       id-token: write
     steps:
