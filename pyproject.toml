@@ -8,12 +8,31 @@ version = "0.1.0"
 description = "ESP-IDF Documentation Explorer MCP Server"
 readme = "README.md"
 requires-python = ">=3.12"
+license = {file = "LICENSE"}
+authors = [
+    {name = "raihalea", email = "raihalea@users.noreply.github.com"},
+]
+keywords = ["esp-idf", "documentation", "mcp", "server"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+]
 dependencies = [
     "mcp>=1.11.0",
     "httpx>=0.25.0",
     "beautifulsoup4>=4.13.0",
     "lxml>=6.0.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/raihalea/esp-idf-docs"
+Repository = "https://github.com/raihalea/esp-idf-docs.git"
+Issues = "https://github.com/raihalea/esp-idf-docs/issues"
 
 [project.scripts]
 esp-idf-docs-mcp = "esp_idf_docs_mcp.server:run"
