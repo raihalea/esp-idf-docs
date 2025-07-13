@@ -1,6 +1,6 @@
 # ESP-IDF Documentation Explorer MCP Server
 
-A Model Context Protocol (MCP) server for exploring ESP-IDF documentation.
+A Model Context Protocol (MCP) server for exploring ESP-IDF documentation. This implementation is inspired by the [AWS Documentation MCP Server](https://github.com/awslabs/mcp/tree/main/src/aws-documentation-mcp-server).
 
 ## Features
 
