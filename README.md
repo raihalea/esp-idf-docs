@@ -12,15 +12,30 @@ A Model Context Protocol (MCP) server for exploring ESP-IDF documentation online
 
 ## Installation and Usage
 
-Run directly with uvx:
+### From PyPI (Recommended)
 
 ```bash
+# Install and run directly
+uvx esp-idf-docs-mcp
+
+# Or install globally
+pip install esp-idf-docs-mcp
+```
+
+### From Source
+
+```bash
+# Run directly from GitHub
 uvx --from git+https://github.com/raihalea/esp-idf-docs.git esp-idf-docs-mcp
 ```
 
-For development installation:
+### Development Installation
 
 ```bash
+# Clone and install for development
+git clone https://github.com/raihalea/esp-idf-docs.git
+cd esp-idf-docs
+
 # Install dependencies only
 uv sync
 
@@ -33,6 +48,35 @@ uv sync --dev
 Add the following to your MCP client configuration (e.g., Claude Desktop):
 
 ```json
+{
+  "mcpServers": {
+    "esp-idf-docs": {
+      "command": "uvx",
+      "args": ["esp-idf-docs-mcp"],
+      "env": {
+        "ESP_IDF_VERSION": "latest"
+      }
+    }
+  }
+}
+```
+
+**Alternative configurations:**
+
+```json
+// Using pip installed package
+{
+  "mcpServers": {
+    "esp-idf-docs": {
+      "command": "esp-idf-docs-mcp",
+      "env": {
+        "ESP_IDF_VERSION": "latest"
+      }
+    }
+  }
+}
+
+// Using source from GitHub
 {
   "mcpServers": {
     "esp-idf-docs": {
@@ -116,11 +160,14 @@ export ESP_IDF_BASE_URL="https://docs.espressif.com/projects/esp-idf"
 **Usage examples:**
 
 ```bash
-# Run with specific version
-ESP_IDF_VERSION="v5.1" uvx --from git+https://github.com/raihalea/esp-idf-docs.git esp-idf-docs-mcp
+# Run with specific version (PyPI)
+ESP_IDF_VERSION="v5.1" uvx esp-idf-docs-mcp
 
 # Run with latest (default)
-uvx --from git+https://github.com/raihalea/esp-idf-docs.git esp-idf-docs-mcp
+uvx esp-idf-docs-mcp
+
+# Run from source with specific version
+ESP_IDF_VERSION="v5.1" uvx --from git+https://github.com/raihalea/esp-idf-docs.git esp-idf-docs-mcp
 ```
 
 ## Testing
