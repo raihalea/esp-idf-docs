@@ -98,7 +98,7 @@ async def main():
     """Run the MCP server with proper error handling."""
     try:
         logger.info(f"Starting {config.server_name} v{config.server_version}")
-        logger.info(f"Documentation path: {config.docs_path}")
+        logger.info(f"Documentation URL: {config.base_url}/{config.esp_idf_version}")
         logger.info(f"Server configuration: {len(config.to_dict())} settings loaded")
 
         from mcp.server.stdio import stdio_server
