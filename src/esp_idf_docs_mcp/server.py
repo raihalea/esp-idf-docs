@@ -108,7 +108,11 @@ async def main():
                 read_stream,
                 write_stream,
                 InitializationOptions(
-                    server_name=config.server_name, server_version=config.server_version
+                    server_name=config.server_name,
+                    server_version=config.server_version,
+                    capabilities=server.get_capabilities(
+                        notification_options=None, experimental_capabilities={}
+                    ),
                 ),
             )
 
