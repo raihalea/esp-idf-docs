@@ -61,8 +61,7 @@ jobs:
     
     - name: Test installation
       run: |
-        uv pip install -e .
-        python -c "import esp_idf_docs_mcp; print('Package installed successfully')"
+        uv run python -c "import esp_idf_docs_mcp; print('Package installed successfully')"
 
   type-check:
     name: Type Check
