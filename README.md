@@ -20,7 +20,11 @@ uvx --from git+https://github.com/your-username/esp-idf-docs-mcp.git esp-idf-doc
 For development installation:
 
 ```bash
-uv pip install -e .
+# Install dependencies only
+uv sync
+
+# Install with development dependencies
+uv sync --dev
 ```
 
 ## Usage in MCP Clients
@@ -104,7 +108,45 @@ uv run pytest --cov=src/esp_idf_docs_mcp
 - **Basic Tests** (`test_minimal.py`): Core functionality and imports
 - **Implementation Tests** (`test_fixed.py`): Actual implementation validation  
 - **Comprehensive Tests** (`test_comprehensive.py`): Error handling, security, performance, and robustness
+- **Integration Tests** (`test_explorer_integration.py`): End-to-end ESPIDFDocsExplorer testing
 
-## License
+## Development
 
-MIT License
+### Code Quality
+
+This project uses [ruff](https://github.com/astral-sh/ruff) for linting and formatting:
+
+```bash
+# Install development dependencies
+uv sync --dev
+
+# Run linter
+uv run ruff check src/ tests/
+
+# Auto-fix linting issues
+uv run ruff check src/ tests/ --fix
+
+# Format code
+uv run ruff format src/ tests/
+
+# Check formatting
+uv run ruff format --check src/ tests/
+```
+
+### Development Workflow
+
+Common development commands:
+
+```bash
+# Setup development environment
+uv sync --dev
+
+# Run all quality checks
+uv run ruff check src/ tests/ && uv run ruff format --check src/ tests/ && uv run pytest
+
+# Run individual checks
+uv run ruff check src/ tests/              # Linting
+uv run ruff check src/ tests/ --fix        # Auto-fix linting
+uv run ruff format src/ tests/             # Format code
+uv run pytest                              # Run tests
+```

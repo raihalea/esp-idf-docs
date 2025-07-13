@@ -170,9 +170,26 @@ Dockerfile
 docker-compose.yml
 .dockerignore
 
-# Test files
-test_*.py
-*_test.py
+# Ruff cache
+.ruff_cache/
+
+# Type checking
+.pyright/
+
+# Pre-commit
+.pre-commit-cache/
+
+# Coverage reports
+.coverage
+htmlcov/
+coverage.xml
+
+# Bandit security check reports
+.bandit
+bandit-report.json
+
+# Safety security check reports
+safety-report.json
 
 # Development files
 setup_*.sh

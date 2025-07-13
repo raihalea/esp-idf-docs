@@ -1,7 +1,6 @@
-"""
-Refactored ESP-IDF Documentation MCP Server.
+"""Refactored ESP-IDF Documentation MCP Server.
 
-This is the main server module with improved organization, 
+This is the main server module with improved organization,
 better separation of concerns, and enhanced maintainability.
 """
 
@@ -12,20 +11,17 @@ from mcp.server import Server
 from mcp.server.models import InitializationOptions
 
 from .config import get_config
+from .exceptions import ConfigurationError
 from .explorer import ESPIDFDocsExplorer
 from .handlers import MCPHandlers
-from .exceptions import ConfigurationError
 
 # Initialize configuration and logging
 try:
     config = get_config()
-    
-    logging.basicConfig(
-        level=getattr(logging, config.log_level),
-        format=config.log_format
-    )
+
+    logging.basicConfig(level=getattr(logging, config.log_level), format=config.log_format)
     logger = logging.getLogger(__name__)
-    
+
 except Exception as e:
     # Fallback logging configuration
     logging.basicConfig(level=logging.ERROR)
@@ -40,9 +36,9 @@ server = Server(config.server_name)
 try:
     explorer = ESPIDFDocsExplorer(config)
     handlers = MCPHandlers(explorer)
-    
+
     logger.info(f"Initialized {config.server_name} v{config.server_version}")
-    
+
 except Exception as e:
     logger.error(f"Failed to initialize server components: {e}")
     raise ConfigurationError(f"Server initialization failed: {e}")
@@ -104,19 +100,18 @@ async def main():
         logger.info(f"Starting {config.server_name} v{config.server_version}")
         logger.info(f"Documentation path: {config.docs_path}")
         logger.info(f"Server configuration: {len(config.to_dict())} settings loaded")
-        
+
         from mcp.server.stdio import stdio_server
-        
+
         async with stdio_server() as (read_stream, write_stream):
             await server.run(
                 read_stream,
                 write_stream,
                 InitializationOptions(
-                    server_name=config.server_name,
-                    server_version=config.server_version
-                )
+                    server_name=config.server_name, server_version=config.server_version
+                ),
             )
-            
+
     except KeyboardInterrupt:
         logger.info("Server stopped by user")
     except Exception as e:

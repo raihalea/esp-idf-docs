@@ -20,6 +20,7 @@ dev-dependencies = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
     "pytest-mock>=3.12.0",
+    "ruff>=0.12.3",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -43,3 +44,60 @@ filterwarnings = [
     "ignore::DeprecationWarning",
     "ignore::PendingDeprecationWarning",
 ]
+
+[tool.ruff]
+# Exclude auto-generated, vendored, or build directories
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+    ".eggs",
+    "*.egg-info",
+]
+
+# Set the line length for formatting and linting
+line-length = 100
+
+# Set the target Python version
+target-version = "py312"
+
+[tool.ruff.lint]
+exclude = ["__init__.py"]
+select = ["C", "D", "E", "F", "I", "W"]
+ignore = ["C901", "E501", "E741", "F402", "F823", "D100", "D106"]
+
+# Allow autofix for specific rules
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+# Test files can have additional ignored rules
+"tests/**/*.py" = [
+    "D", # Don't require docstrings in tests
+    "ARG", # Unused arguments are common in tests
+    "PLR2004", # Magic value used in comparison
+]
+
+[tool.ruff.lint.pydocstyle]
+# Use Google-style docstrings
+convention = "google"
+
+[tool.ruff.lint.isort]
+# Configure import sorting
+known-first-party = ["esp_idf_docs_mcp"]
+split-on-trailing-comma = true
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Use spaces around operators
+indent-style = "space"
+
+# Keep existing line endings
+line-ending = "auto"
+
+# Skip string normalization to avoid conflicts with existing code
+skip-magic-trailing-comma = false
