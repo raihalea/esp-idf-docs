@@ -65,9 +65,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    environment:
-      name: pypipypi
-      url: https://pypi.org/p/esp-idf-docs
+    environment: pypipypi
     permissions:
       id-token: write
     steps:
