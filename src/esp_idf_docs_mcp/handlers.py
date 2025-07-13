@@ -10,6 +10,7 @@ import time
 from typing import Any
 
 from mcp.types import (
+    AnyUrl,
     Resource,
     ResourceTemplate,
     TextContent,
@@ -335,7 +336,7 @@ Returns: Ranked list of recommended documents with descriptions and metadata."""
         """List available resources."""
         return [
             Resource(
-                uri="docs://structure",
+                uri=AnyUrl("docs://structure"),
                 name="ESP-IDF Documentation Structure",
                 description="Complete overview of the ESP-IDF documentation structure with enhanced metadata",
                 mimeType="application/json",
@@ -361,7 +362,7 @@ Returns: Ranked list of recommended documents with descriptions and metadata."""
             if uri == "docs://structure":
                 structure = await self.explorer.get_doc_structure()
                 return TextResourceContents(
-                    uri=uri,
+                    uri=AnyUrl(uri),
                     mimeType="application/json",
                     text=json.dumps(structure, indent=2, ensure_ascii=False),
                 )
@@ -372,7 +373,7 @@ Returns: Ranked list of recommended documents with descriptions and metadata."""
 
                 if result:
                     return TextResourceContents(
-                        uri=uri, mimeType="text/plain", text=result["content"]
+                        uri=AnyUrl(uri), mimeType="text/plain", text=result["content"]
                     )
 
             raise ValueError(f"Unknown resource: {uri}")

@@ -8,7 +8,7 @@ import asyncio
 import logging
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .config import ServerConfig
 from .recommendations import RecommendationEngine
@@ -85,7 +85,7 @@ class ESPIDFDocsExplorer:
     def _get_all_doc_files(self) -> list[Path]:
         """Get all documentation files matching configured extensions."""
         file_patterns = [f"**/*{ext}" for ext in self.config.allowed_extensions]
-        all_files = []
+        all_files: list[Path] = []
 
         for pattern in file_patterns:
             all_files.extend(self.docs_path.rglob(pattern))
@@ -224,7 +224,7 @@ class ESPIDFDocsExplorer:
                     logger.error(f"Error processing file {file_path}: {e}")
 
             # Sort by relevance score (descending)
-            all_results.sort(key=lambda x: x["score"], reverse=True)
+            all_results.sort(key=lambda x: cast(float, x.get("score", 0.0)), reverse=True)
 
             # Apply pagination
             paginated_results = all_results[offset : offset + effective_limit]
@@ -271,7 +271,7 @@ class ESPIDFDocsExplorer:
         try:
             logger.debug("Getting documentation structure")
 
-            structure = {
+            structure: dict[str, Any] = {
                 "directories": {},
                 "files": [],
                 "metadata": {
@@ -290,13 +290,13 @@ class ESPIDFDocsExplorer:
             for item in self.docs_path.iterdir():
                 if item.is_dir() and not item.name.startswith("."):
                     # Get all files matching allowed extensions
-                    doc_files = []
+                    doc_files: list[Path] = []
                     for ext in self.config.allowed_extensions:
                         doc_files.extend(item.rglob(f"*{ext}"))
 
                     if doc_files:
                         # Group by extension
-                        ext_counts = {}
+                        ext_counts: dict[str, int] = {}
                         dir_size = 0
 
                         for file_path in doc_files:
@@ -480,7 +480,7 @@ class ESPIDFDocsExplorer:
                     logger.warning(f"Error processing file {file_path}: {e}")
 
             # Sort by match count (descending)
-            results.sort(key=lambda x: x["match_count"], reverse=True)
+            results.sort(key=lambda x: cast(int, x.get("match_count", 0)), reverse=True)
 
             search_time = (time.time() - start_time) * 1000
 

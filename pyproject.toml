@@ -19,8 +19,9 @@ esp-idf-docs-mcp = "esp_idf_docs_mcp.server:run"
 dev-dependencies = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
-    "pytest-mock>=3.12.0",
+    "pytest-mock>=3.14.0",
     "ruff>=0.12.3",
+    "mypy>=1.15.0",
 ]
 
 [tool.hatch.build.targets.wheel]

@@ -30,7 +30,7 @@ except Exception as e:
     raise ConfigurationError(f"Configuration initialization failed: {e}")
 
 # Initialize server
-server = Server(config.server_name)
+server: Server = Server(config.server_name)
 
 # Initialize explorer and handlers
 try:

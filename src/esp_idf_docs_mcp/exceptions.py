@@ -20,7 +20,7 @@ class ConfigurationError(ESPIDFDocsError):
 class ValidationError(ESPIDFDocsError):
     """Raised when input validation fails."""
 
-    def __init__(self, message: str, field: str = None, value: str = None):
+    def __init__(self, message: str, field: str | None = None, value: str | None = None):
         """Initialize ValidationError with message and optional field/value."""
         super().__init__(message)
         self.field = field
@@ -30,7 +30,7 @@ class ValidationError(ESPIDFDocsError):
 class FileAccessError(ESPIDFDocsError):
     """Raised when file access fails."""
 
-    def __init__(self, message: str, file_path: str = None):
+    def __init__(self, message: str, file_path: str | None = None):
         """Initialize FileAccessError with message and optional file path."""
         super().__init__(message)
         self.file_path = file_path
@@ -39,7 +39,7 @@ class FileAccessError(ESPIDFDocsError):
 class SearchError(ESPIDFDocsError):
     """Raised when search operation fails."""
 
-    def __init__(self, message: str, query: str = None):
+    def __init__(self, message: str, query: str | None = None):
         """Initialize SearchError with message and optional query."""
         super().__init__(message)
         self.query = query

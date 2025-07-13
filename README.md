@@ -142,11 +142,12 @@ Common development commands:
 uv sync --dev
 
 # Run all quality checks
-uv run ruff check src/ tests/ && uv run ruff format --check src/ tests/ && uv run pytest
+uv run ruff check src/ tests/ && uv run ruff format --check src/ tests/ && uv run pytest && uv run mypy src/ --ignore-missing-imports 
 
 # Run individual checks
 uv run ruff check src/ tests/              # Linting
 uv run ruff check src/ tests/ --fix        # Auto-fix linting
 uv run ruff format src/ tests/             # Format code
 uv run pytest                              # Run tests
+uv run mypy src/ --ignore-missing-imports  # Type checking
 ```

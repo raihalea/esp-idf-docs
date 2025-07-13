@@ -66,7 +66,7 @@ class DocumentIndexer:
 
         # Get all documentation files
         file_patterns = [f"**/*{ext}" for ext in self.config.allowed_extensions]
-        all_files = []
+        all_files: list[Path] = []
 
         for pattern in file_patterns:
             all_files.extend(docs_path.rglob(pattern))
@@ -426,7 +426,7 @@ class RecommendationEngine:
         self, query: str, limit: int
     ) -> list[Recommendation]:
         """Get recommendations for related API documentation."""
-        recommendations = []
+        recommendations: list[Recommendation] = []
 
         # ESP-IDF API component mappings
         api_relationships = {

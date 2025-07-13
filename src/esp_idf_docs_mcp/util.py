@@ -223,7 +223,7 @@ class SearchEngine:
         self.config = config
         self._term_cache: dict[str, list[str]] = {}
 
-    def fuzzy_match(self, query: str, text: str, threshold: float = None) -> bool:
+    def fuzzy_match(self, query: str, text: str, threshold: float | None = None) -> bool:
         """Check if query fuzzy matches text."""
         threshold = threshold or self.config.fuzzy_threshold
 
@@ -411,7 +411,7 @@ class FileCache:
         except (OSError, FileNotFoundError):
             pass
 
-    def invalidate(self, file_path: Path = None) -> None:
+    def invalidate(self, file_path: Path | None = None) -> None:
         """Invalidate cache for specific file or all files."""
         if file_path:
             self._cache.pop(str(file_path), None)
@@ -516,7 +516,12 @@ class DocumentAnalyzer:
     @staticmethod
     def analyze_document(content: str, metadata: DocumentMetadata) -> dict[str, Any]:
         """Comprehensive document analysis."""
-        analysis = {"readability": {}, "structure": {}, "quality": {}, "metadata": {}}
+        analysis: dict[str, Any] = {
+            "readability": {},
+            "structure": {},
+            "quality": {},
+            "metadata": {},
+        }
 
         # Basic metrics
         words = content.split()

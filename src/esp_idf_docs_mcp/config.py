@@ -54,27 +54,27 @@ class ServerConfig:
         docs_path = Path(docs_path_str)
 
         # Parse boolean values
-        def parse_bool(value: str, default: bool = False) -> bool:
+        def parse_bool(value: str | None, default: bool = False) -> bool:
             if not value:
                 return default
             return value.lower() in ("true", "1", "yes", "on", "enabled")
 
         # Parse integer values
-        def parse_int(value: str, default: int) -> int:
+        def parse_int(value: str | None, default: int) -> int:
             try:
                 return int(value) if value else default
             except ValueError:
                 return default
 
         # Parse float values
-        def parse_float(value: str, default: float) -> float:
+        def parse_float(value: str | None, default: float) -> float:
             try:
                 return float(value) if value else default
             except ValueError:
                 return default
 
         # Parse list values
-        def parse_list(value: str, default: list[str]) -> list[str]:
+        def parse_list(value: str | None, default: list[str]) -> list[str]:
             if not value:
                 return default
             return [item.strip() for item in value.split(",") if item.strip()]
