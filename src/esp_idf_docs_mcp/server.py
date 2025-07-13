@@ -1,135 +1,103 @@
-"""Refactored ESP-IDF Documentation MCP Server.
+"""ESP-IDF Documentation Explorer MCP Server using FastMCP."""
 
-This is the main server module with improved organization,
-better separation of concerns, and enhanced maintainability.
-"""
-
-import asyncio
 import logging
+from typing import Any
 
-from mcp.server import Server
-from mcp.server.models import InitializationOptions
+from fastmcp import FastMCP
 
 from .config import get_config
-from .exceptions import ConfigurationError
 from .explorer import ESPIDFDocsExplorer
-from .handlers import MCPHandlers
 
-# Initialize configuration and logging
-try:
-    config = get_config()
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler()],
+)
 
-    logging.basicConfig(level=getattr(logging, config.log_level), format=config.log_format)
-    logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
-except Exception as e:
-    # Fallback logging configuration
-    logging.basicConfig(level=logging.ERROR)
-    logger = logging.getLogger(__name__)
-    logger.error(f"Failed to load configuration: {e}")
-    raise ConfigurationError(f"Configuration initialization failed: {e}")
+# Load configuration
+config = get_config()
 
-# Initialize server
-server: Server = Server(config.server_name)
+# Create FastMCP server
+mcp: FastMCP = FastMCP(
+    name="esp-idf-docs-explorer", dependencies=["httpx", "beautifulsoup4", "lxml"]
+)
 
-# Initialize explorer and handlers
-try:
-    explorer = ESPIDFDocsExplorer(config)
-    handlers = MCPHandlers(explorer)
-
-    logger.info(f"Initialized {config.server_name} v{config.server_version}")
-
-except Exception as e:
-    logger.error(f"Failed to initialize server components: {e}")
-    raise ConfigurationError(f"Server initialization failed: {e}")
+# Initialize explorer
+explorer = ESPIDFDocsExplorer(config)
 
 
-@server.list_tools()
-async def handle_list_tools():
-    """Handle list_tools request."""
-    try:
-        return await handlers.list_tools()
-    except Exception as e:
-        logger.error(f"Error listing tools: {e}")
-        raise
+@mcp.tool()
+async def search_docs(query: str) -> dict[str, Any]:
+    """Search ESP-IDF documentation for keywords (case-insensitive).
+
+    Args:
+        query: Search query string
+
+    Returns:
+        Dictionary containing search results
+    """
+    return await explorer.search_docs(query)
 
 
-@server.call_tool()
-async def handle_call_tool(name: str, arguments: dict):
-    """Handle call_tool request."""
-    try:
-        return await handlers.call_tool(name, arguments)
-    except Exception as e:
-        logger.error(f"Error calling tool {name}: {e}")
-        raise
+@mcp.tool()
+async def get_doc_structure() -> dict[str, Any]:
+    """Get the directory structure of ESP-IDF documentation.
+
+    Returns:
+        Dictionary containing documentation structure
+    """
+    return await explorer.get_doc_structure()
 
 
-@server.list_resources()
-async def handle_list_resources():
-    """Handle list_resources request."""
-    try:
-        return await handlers.list_resources()
-    except Exception as e:
-        logger.error(f"Error listing resources: {e}")
-        raise
+@mcp.tool()
+async def read_doc(file_path: str) -> dict[str, Any] | None:
+    """Read the contents of a specific documentation file.
+
+    Args:
+        file_path: Relative path to the documentation file
+
+    Returns:
+        Dictionary containing document content
+    """
+    return await explorer.read_doc(file_path)
 
 
-@server.list_resource_templates()
-async def handle_list_resource_templates():
-    """Handle list_resource_templates request."""
-    try:
-        return await handlers.list_resource_templates()
-    except Exception as e:
-        logger.error(f"Error listing resource templates: {e}")
-        raise
+@mcp.tool()
+async def find_api_references(component: str) -> dict[str, Any]:
+    """Find API references for a specific ESP-IDF component.
+
+    Args:
+        component: Component or API name to search for
+
+    Returns:
+        Dictionary containing API references
+    """
+    return await explorer.find_api_references(component)
 
 
-@server.read_resource()
-async def handle_read_resource(uri: str):
-    """Handle read_resource request."""
-    try:
-        return await handlers.read_resource(uri)
-    except Exception as e:
-        logger.error(f"Error reading resource {uri}: {e}")
-        raise
-
-
-async def main():
+def main():
     """Run the MCP server with proper error handling."""
     try:
         logger.info(f"Starting {config.server_name} v{config.server_version}")
         logger.info(f"Documentation URL: {config.base_url}/{config.esp_idf_version}")
         logger.info(f"Server configuration: {len(config.to_dict())} settings loaded")
 
-        from mcp.server.stdio import stdio_server
-
-        async with stdio_server() as (read_stream, write_stream):
-            await server.run(
-                read_stream,
-                write_stream,
-                InitializationOptions(
-                    server_name=config.server_name,
-                    server_version=config.server_version,
-                    capabilities=server.get_capabilities(),
-                ),
-            )
+        mcp.run()
 
     except KeyboardInterrupt:
         logger.info("Server stopped by user")
     except Exception as e:
         logger.error(f"Server failed: {e}")
+        logger.error(f"Server crashed: {e}")
         raise
 
 
 def run():
-    """Entry point for uvx and direct execution."""
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        logger.info("Server stopped by user")
-    except Exception as e:
-        logger.error(f"Server crashed: {e}")
-        raise
+    """Entry point for the MCP server."""
+    main()
 
 
 if __name__ == "__main__":
