@@ -59,3 +59,18 @@ class EncodingError(FileAccessError):
 class SecurityError(ValidationError):
     """Raised when security validation fails."""
     pass
+
+
+class DocumentNotFoundError(FileAccessError):
+    """Raised when a document cannot be found."""
+    pass
+
+
+class InvalidPathError(ValidationError):
+    """Raised when a file path is invalid or unsafe."""
+    pass
+
+
+class ProcessingError(ESPIDFDocsError):
+    """Raised when document processing fails."""
+    pass

@@ -78,6 +78,33 @@ Find API references for a specific ESP-IDF component.
 
 - `ESP_IDF_DOCS_PATH`: Path to ESP-IDF documentation directory (defaults to current working directory)
 
+## Testing
+
+Run the test suite:
+
+```bash
+# Install development dependencies
+uv sync --dev
+
+# Run all tests
+uv run pytest
+
+# Run tests with verbose output
+uv run pytest -v
+
+# Run specific test file
+uv run pytest tests/test_minimal.py -v
+
+# Run tests with coverage (if coverage is installed)
+uv run pytest --cov=src/esp_idf_docs_mcp
+```
+
+### Test Categories
+
+- **Basic Tests** (`test_minimal.py`): Core functionality and imports
+- **Implementation Tests** (`test_fixed.py`): Actual implementation validation  
+- **Comprehensive Tests** (`test_comprehensive.py`): Error handling, security, performance, and robustness
+
 ## License
 
 MIT License
