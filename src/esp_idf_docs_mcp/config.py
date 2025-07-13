@@ -1,7 +1,7 @@
 """Configuration management for ESP-IDF Documentation MCP Server."""
 
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 
@@ -13,8 +13,9 @@ class ServerConfig:
     server_name: str = "esp-idf-docs-explorer"
     server_version: str = "0.3.0"
 
-    # Documentation paths
-    docs_path: Path = field(default_factory=lambda: Path.cwd())
+    # Documentation source (online)
+    base_url: str = "https://docs.espressif.com/projects/esp-idf"
+    esp_idf_version: str = "latest"
 
     # Search configuration
     max_results: int = 20
@@ -28,14 +29,10 @@ class ServerConfig:
     enable_query_expansion: bool = True
     enable_stemming: bool = False
 
-    # Performance settings
-    cache_size: int = 100
-    max_concurrent_files: int = 10
-    max_file_size_kb: int = 1024
-
-    # Security settings
-    allowed_extensions: list[str] = field(default_factory=lambda: [".rst", ".md", ".txt"])
-    enable_path_validation: bool = True
+    # Online search settings
+    request_timeout: float = 30.0
+    max_connections: int = 10
+    cache_ttl: int = 3600  # 1 hour
 
     # Logging configuration
     log_level: str = "INFO"
@@ -49,9 +46,9 @@ class ServerConfig:
     @classmethod
     def from_environment(cls) -> "ServerConfig":
         """Create configuration from environment variables."""
-        # Get docs path from environment
-        docs_path_str = os.getenv("ESP_IDF_DOCS_PATH", str(Path.cwd()))
-        docs_path = Path(docs_path_str)
+        # Get online documentation configuration
+        base_url = os.getenv("ESP_IDF_BASE_URL", "https://docs.espressif.com/projects/esp-idf")
+        esp_idf_version = os.getenv("ESP_IDF_VERSION", "latest")
 
         # Parse boolean values
         def parse_bool(value: str | None, default: bool = False) -> bool:
@@ -83,8 +80,9 @@ class ServerConfig:
             # Server identification
             server_name=os.getenv("ESP_IDF_SERVER_NAME", "esp-idf-docs-explorer"),
             server_version=os.getenv("ESP_IDF_SERVER_VERSION", "0.3.0"),
-            # Documentation paths
-            docs_path=docs_path,
+            # Documentation source (online)
+            base_url=base_url,
+            esp_idf_version=esp_idf_version,
             # Search configuration
             max_results=parse_int(os.getenv("ESP_IDF_MAX_RESULTS"), 20),
             max_matches_per_file=parse_int(os.getenv("ESP_IDF_MAX_MATCHES_PER_FILE"), 5),
@@ -95,15 +93,10 @@ class ServerConfig:
             fuzzy_threshold=parse_float(os.getenv("ESP_IDF_FUZZY_THRESHOLD"), 0.6),
             enable_query_expansion=parse_bool(os.getenv("ESP_IDF_ENABLE_QUERY_EXPANSION"), True),
             enable_stemming=parse_bool(os.getenv("ESP_IDF_ENABLE_STEMMING"), False),
-            # Performance settings
-            cache_size=parse_int(os.getenv("ESP_IDF_CACHE_SIZE"), 100),
-            max_concurrent_files=parse_int(os.getenv("ESP_IDF_MAX_CONCURRENT_FILES"), 10),
-            max_file_size_kb=parse_int(os.getenv("ESP_IDF_MAX_FILE_SIZE_KB"), 1024),
-            # Security settings
-            allowed_extensions=parse_list(
-                os.getenv("ESP_IDF_ALLOWED_EXTENSIONS"), [".rst", ".md", ".txt"]
-            ),
-            enable_path_validation=parse_bool(os.getenv("ESP_IDF_ENABLE_PATH_VALIDATION"), True),
+            # Online search settings
+            request_timeout=parse_float(os.getenv("ESP_IDF_REQUEST_TIMEOUT"), 30.0),
+            max_connections=parse_int(os.getenv("ESP_IDF_MAX_CONNECTIONS"), 10),
+            cache_ttl=parse_int(os.getenv("ESP_IDF_CACHE_TTL"), 3600),
             # Logging configuration
             log_level=os.getenv("ESP_IDF_LOG_LEVEL", "INFO"),
             log_format=os.getenv(
@@ -121,12 +114,9 @@ class ServerConfig:
         """Validate configuration values."""
         errors = []
 
-        # Validate paths
-        if not self.docs_path.exists():
-            errors.append(f"Documentation path does not exist: {self.docs_path}")
-
-        if not self.docs_path.is_dir():
-            errors.append(f"Documentation path is not a directory: {self.docs_path}")
+        # Validate URLs
+        if not self.base_url.startswith(("http://", "https://")):
+            errors.append(f"base_url must be a valid HTTP/HTTPS URL: {self.base_url}")
 
         # Validate numeric ranges
         if self.max_results <= 0 or self.max_results > 1000:
@@ -147,21 +137,10 @@ class ServerConfig:
                 f"fuzzy_threshold must be between 0.0 and 1.0, got {self.fuzzy_threshold}"
             )
 
-        if self.cache_size <= 0 or self.cache_size > 10000:
-            errors.append(f"cache_size must be between 1 and 10000, got {self.cache_size}")
-
         # Validate log level
         valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
         if self.log_level.upper() not in valid_levels:
             errors.append(f"log_level must be one of {valid_levels}, got {self.log_level}")
-
-        # Validate extensions
-        if not self.allowed_extensions:
-            errors.append("allowed_extensions cannot be empty")
-
-        for ext in self.allowed_extensions:
-            if not ext.startswith("."):
-                errors.append(f"Extension must start with '.', got {ext}")
 
         if errors:
             raise ValueError(
@@ -180,14 +159,13 @@ class ServerConfig:
 
     def __post_init__(self):
         """Post-initialization validation."""
-        # Convert string path to Path object if needed
-        if isinstance(self.docs_path, str):
-            self.docs_path = Path(self.docs_path)
+        # Validate URLs
+        if not self.base_url.startswith(("http://", "https://")):
+            raise ValueError(f"Invalid base_url: {self.base_url}")
 
-        # Ensure extensions start with dot
-        self.allowed_extensions = [
-            ext if ext.startswith(".") else f".{ext}" for ext in self.allowed_extensions
-        ]
+        # Ensure version is valid
+        if not self.esp_idf_version:
+            self.esp_idf_version = "latest"
 
         # Normalize log level
         self.log_level = self.log_level.upper()

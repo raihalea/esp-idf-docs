@@ -18,11 +18,9 @@ from mcp.types import (
     Tool,
 )
 
-from .config import get_config
 from .explorer import ESPIDFDocsExplorer
 
 logger = logging.getLogger(__name__)
-config = get_config()
 
 
 class MCPHandlers:
@@ -157,51 +155,6 @@ Returns: Detailed matches with context and metadata.""",
             ),
         ]
 
-        # Add recommendation tool if enabled
-        if config.enable_recommendations:
-            tools.append(
-                Tool(
-                    name="get_recommendations",
-                    description="""Get intelligent document recommendations based on your query.
-
-Features:
-- Content similarity recommendations
-- Popular/important document suggestions
-- Related API documentation
-- Multiple recommendation types with relevance scoring
-
-Recommendation Types:
-- content_similarity: Documents with similar content to your query
-- popular_*: Important documents (getting started, API reference, etc.)
-- related_api: Related API documentation and components
-
-Example usage:
-- get_recommendations({"query": "wifi setup"})
-- get_recommendations({"query": "gpio configuration", "limit": 10})
-
-Returns: Ranked list of recommended documents with descriptions and metadata.""",
-                    inputSchema={
-                        "type": "object",
-                        "properties": {
-                            "query": {
-                                "type": "string",
-                                "description": "Query for finding related documentation",
-                                "minLength": 1,
-                                "maxLength": 100,
-                            },
-                            "limit": {
-                                "type": "integer",
-                                "description": "Maximum number of recommendations (default: 5, max: 20)",
-                                "minimum": 1,
-                                "maximum": 20,
-                                "default": 5,
-                            },
-                        },
-                        "required": ["query"],
-                    },
-                )
-            )
-
         return tools
 
     async def call_tool(self, name: str, arguments: dict[str, Any]) -> list[TextContent]:
@@ -219,8 +172,6 @@ Returns: Ranked list of recommended documents with descriptions and metadata."""
                 return await self._handle_read_doc(arguments)
             elif name == "find_api_references":
                 return await self._handle_find_api_references(arguments)
-            elif name == "get_recommendations":
-                return await self._handle_get_recommendations(arguments)
             else:
                 return self._handle_unknown_tool(name)
 
@@ -269,23 +220,12 @@ Returns: Ranked list of recommended documents with descriptions and metadata."""
 
         return [TextContent(type="text", text=json.dumps(result, indent=2, ensure_ascii=False))]
 
-    async def _handle_get_recommendations(self, arguments: dict[str, Any]) -> list[TextContent]:
-        """Handle get_recommendations tool call."""
-        query = arguments["query"]
-        limit = arguments.get("limit", 5)
-
-        result = await self.explorer.get_recommendations(query, limit)
-
-        return [TextContent(type="text", text=json.dumps(result, indent=2, ensure_ascii=False))]
-
     def _handle_unknown_tool(self, name: str) -> list[TextContent]:
         """Handle unknown tool error."""
         error_msg = f"Unknown tool: {name}"
         logger.error(error_msg)
 
         available_tools = ["search_docs", "get_doc_structure", "read_doc", "find_api_references"]
-        if config.enable_recommendations:
-            available_tools.append("get_recommendations")
 
         return [
             TextContent(

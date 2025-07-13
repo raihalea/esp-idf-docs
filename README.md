@@ -1,13 +1,14 @@
 # ESP-IDF Documentation Explorer MCP Server
 
-A Model Context Protocol (MCP) server for exploring ESP-IDF documentation. This implementation is inspired by the [AWS Documentation MCP Server](https://github.com/awslabs/mcp/tree/main/src/aws-documentation-mcp-server).
+A Model Context Protocol (MCP) server for exploring ESP-IDF documentation online. This server fetches content directly from the official ESP-IDF documentation website, ensuring you always have access to the latest information. This implementation is inspired by the [AWS Documentation MCP Server](https://github.com/awslabs/mcp/tree/main/src/aws-documentation-mcp-server).
 
 ## Features
 
-- **Document Search**: Search ESP-IDF documentation by keywords
-- **Document Structure**: Get directory structure of documentation
-- **File Reading**: Read specific documentation files
+- **Online Search**: Search ESP-IDF documentation directly from the official website
+- **Real-time Content**: Always access the latest documentation without local setup
+- **Multi-version Support**: Choose ESP-IDF version (latest or specific versions)
 - **API Reference Search**: Find API references for ESP-IDF components
+- **Smart Caching**: Intelligent caching for improved performance
 
 ## Installation and Usage
 
@@ -42,7 +43,7 @@ Add the following to your MCP client configuration (e.g., Claude Desktop):
         "esp-idf-docs-mcp"
       ],
       "env": {
-        "ESP_IDF_DOCS_PATH": "/path/to/esp-idf/docs"
+        "ESP_IDF_VERSION": "latest"
       }
     }
   }
@@ -80,7 +81,47 @@ Find API references for a specific ESP-IDF component.
 
 ## Environment Variables
 
-- `ESP_IDF_DOCS_PATH`: Path to ESP-IDF documentation directory (defaults to current working directory)
+### ESP_IDF_VERSION
+
+ESP-IDF documentation version to use (defaults to "latest").
+
+**Available versions:**
+- `latest` - Latest stable version
+- `v5.1` - ESP-IDF v5.1
+- `v5.0` - ESP-IDF v5.0
+- `v4.4` - ESP-IDF v4.4
+- etc.
+
+**Setting the environment variable:**
+
+```bash
+# Linux/macOS
+export ESP_IDF_VERSION="v5.1"
+
+# Windows Command Prompt
+set ESP_IDF_VERSION=v5.1
+
+# Windows PowerShell
+$env:ESP_IDF_VERSION="v5.1"
+```
+
+### ESP_IDF_BASE_URL
+
+Base URL for ESP-IDF documentation (defaults to official site).
+
+```bash
+export ESP_IDF_BASE_URL="https://docs.espressif.com/projects/esp-idf"
+```
+
+**Usage examples:**
+
+```bash
+# Run with specific version
+ESP_IDF_VERSION="v5.1" uvx --from git+https://github.com/your-username/esp-idf-docs-mcp.git esp-idf-docs-mcp
+
+# Run with latest (default)
+uvx --from git+https://github.com/your-username/esp-idf-docs-mcp.git esp-idf-docs-mcp
+```
 
 ## Testing
 
@@ -142,7 +183,7 @@ Common development commands:
 uv sync --dev
 
 # Run all quality checks
-uv run ruff check src/ tests/ && uv run ruff format --check src/ tests/ && uv run pytest && uv run mypy src/ --ignore-missing-imports 
+uv run ruff check src/ tests/ && uv run ruff format src/ tests/ && uv run pytest && uv run mypy src/ --ignore-missing-imports
 
 # Run individual checks
 uv run ruff check src/ tests/              # Linting

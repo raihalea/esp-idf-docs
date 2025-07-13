@@ -196,4 +196,4 @@ setup_*.sh
 README_DEVCONTAINER.md
 
 # Claude Code
-.claude/
+.claude/settings.local.json

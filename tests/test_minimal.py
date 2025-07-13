@@ -8,6 +8,10 @@ def test_config_import_and_creation():
     config = ServerConfig()
     assert config is not None
     assert hasattr(config, "server_name")
+    assert hasattr(config, "base_url")
+    assert hasattr(config, "esp_idf_version")
+    assert config.base_url == "https://docs.espressif.com/projects/esp-idf"
+    assert config.esp_idf_version == "latest"
 
 
 def test_exceptions_import():
@@ -27,15 +31,11 @@ def test_exceptions_import():
 
 def test_util_import():
     """Test that util module can be imported."""
-    from esp_idf_docs_mcp.util import FileCache, TextProcessor, ValidationUtils
+    from esp_idf_docs_mcp.util import TextProcessor, ValidationUtils
 
-    processor = TextProcessor()
-    cache = FileCache()
-    validator = ValidationUtils()
-
-    assert processor is not None
-    assert cache is not None
-    assert validator is not None
+    # Test that classes exist
+    assert TextProcessor is not None
+    assert ValidationUtils is not None
 
 
 def test_text_processor_basic():
@@ -57,28 +57,34 @@ def test_text_processor_basic():
     assert "Title" in cleaned_md
 
 
-def test_file_cache_basic():
-    """Test basic FileCache functionality."""
-    from esp_idf_docs_mcp.util import FileCache
+def test_text_processor_static():
+    """Test TextProcessor static methods."""
+    from esp_idf_docs_mcp.util import TextProcessor
 
-    cache = FileCache()
+    # Test normalize_text
+    result = TextProcessor.normalize_text("Hello World!")
+    assert result == "hello world"
 
-    # Test basic cache operations
-    assert cache.get("nonexistent") is None
-
-    # Test that cache has expected methods
-    assert hasattr(cache, "get")
+    # Test extract_headings
+    md_text = "# Heading 1\n## Heading 2"
+    headings = TextProcessor.extract_headings(md_text)
+    assert len(headings) >= 2
 
 
 def test_validation_utils_basic():
     """Test basic ValidationUtils functionality."""
     from esp_idf_docs_mcp.util import ValidationUtils
 
-    validator = ValidationUtils()
+    # Test that methods exist (static methods)
+    assert hasattr(ValidationUtils, "validate_query")
+    assert hasattr(ValidationUtils, "detect_encoding")
+    assert hasattr(ValidationUtils, "sanitize_filename")
 
-    # Test that validator has expected methods
-    assert hasattr(validator, "validate_query")
-    assert hasattr(validator, "is_safe_path")
+    # Test validate_query
+    try:
+        ValidationUtils.validate_query("wifi")
+    except Exception:
+        assert False, "Valid query should not raise exception"
 
 
 def test_package_structure():
@@ -93,7 +99,7 @@ def test_package_structure():
     import esp_idf_docs_mcp.exceptions
     import esp_idf_docs_mcp.explorer
     import esp_idf_docs_mcp.handlers
-    import esp_idf_docs_mcp.recommendations
     import esp_idf_docs_mcp.util
+    import esp_idf_docs_mcp.web_explorer
 
     assert True  # If we reach here, all imports succeeded
