@@ -16,6 +16,7 @@ class ServerConfig:
     # Documentation source (online)
     base_url: str = "https://docs.espressif.com/projects/esp-idf"
     esp_idf_version: str = "latest"
+    chip_target: str = "esp32"  # Default chip target
 
     # Search configuration
     max_results: int = 20
@@ -49,6 +50,7 @@ class ServerConfig:
         # Get online documentation configuration
         base_url = os.getenv("ESP_IDF_BASE_URL", "https://docs.espressif.com/projects/esp-idf")
         esp_idf_version = os.getenv("ESP_IDF_VERSION", "latest")
+        chip_target = os.getenv("ESP_IDF_CHIP_TARGET", "esp32")
 
         # Parse boolean values
         def parse_bool(value: str | None, default: bool = False) -> bool:
@@ -83,6 +85,7 @@ class ServerConfig:
             # Documentation source (online)
             base_url=base_url,
             esp_idf_version=esp_idf_version,
+            chip_target=chip_target,
             # Search configuration
             max_results=parse_int(os.getenv("ESP_IDF_MAX_RESULTS"), 20),
             max_matches_per_file=parse_int(os.getenv("ESP_IDF_MAX_MATCHES_PER_FILE"), 5),
@@ -206,7 +209,9 @@ ESP-IDF Documentation MCP Server Environment Variables:
 Server Configuration:
   ESP_IDF_SERVER_NAME          Server name (default: esp-idf-docs-explorer)
   ESP_IDF_SERVER_VERSION       Server version (default: 0.3.0)
-  ESP_IDF_DOCS_PATH           Path to ESP-IDF documentation (default: current directory)
+  ESP_IDF_BASE_URL            Base URL for ESP-IDF documentation
+  ESP_IDF_VERSION             ESP-IDF version (default: latest)
+  ESP_IDF_CHIP_TARGET         Chip target (default: esp32, options: esp32, esp32s2, esp32s3, esp32c3, etc.)
 
 Search Configuration:
   ESP_IDF_MAX_RESULTS         Maximum search results (default: 20)
