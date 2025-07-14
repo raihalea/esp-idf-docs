@@ -28,12 +28,13 @@ class OnlineESPIDFExplorer:
         self.config = config
         self.base_url = config.base_url
         self.version = config.esp_idf_version
+        self.chip_target = config.chip_target
 
-        # Build versioned base URL
+        # Build versioned base URL with chip target
         if self.version == "latest":
-            self.docs_url = f"{self.base_url}/en/latest"
+            self.docs_url = f"{self.base_url}/en/latest/{self.chip_target}"
         else:
-            self.docs_url = f"{self.base_url}/en/{self.version}"
+            self.docs_url = f"{self.base_url}/en/{self.version}/{self.chip_target}"
 
         # HTTP client with timeout and retries
         self.client = httpx.AsyncClient(
@@ -87,7 +88,6 @@ class OnlineESPIDFExplorer:
             "api-reference/",
             "api-guides/",
             "get-started/",
-            "tutorials/",
             "hw-reference/",
             "security/",
             "api-reference/system/",
@@ -169,6 +169,7 @@ class OnlineESPIDFExplorer:
                             "url": full_url,
                             "relevance_score": relevance_score,
                             "context": context,
+                            "snippet": context,  # Add snippet field for compatibility
                             "section": self._get_section_name(section_url),
                         }
                     )
@@ -204,6 +205,7 @@ class OnlineESPIDFExplorer:
                         "url": page_url + f"#{heading_id if heading_id else ''}",
                         "relevance_score": 15,  # Higher score for headings
                         "context": heading_text,
+                        "snippet": heading_text,  # Add snippet field for compatibility
                         "section": self._get_section_name(page_url),
                         "type": "heading",
                     }
@@ -221,6 +223,7 @@ class OnlineESPIDFExplorer:
                         "url": page_url,
                         "relevance_score": 8,
                         "context": context,
+                        "snippet": context,  # Add snippet field for compatibility
                         "section": self._get_section_name(page_url),
                         "type": "content",
                     }

@@ -73,7 +73,7 @@ class TestOnlineESPIDFExplorer:
         assert explorer.config == server_config
         assert explorer.base_url == "https://docs.espressif.com/projects/esp-idf"
         assert explorer.version == "latest"
-        assert explorer.docs_url == "https://docs.espressif.com/projects/esp-idf/en/latest"
+        assert explorer.docs_url == "https://docs.espressif.com/projects/esp-idf/en/latest/esp32"
 
         await explorer.close()
 
@@ -83,7 +83,7 @@ class TestOnlineESPIDFExplorer:
         config = ServerConfig(esp_idf_version="v5.1")
         explorer = OnlineESPIDFExplorer(config)
 
-        assert explorer.docs_url == "https://docs.espressif.com/projects/esp-idf/en/v5.1"
+        assert explorer.docs_url == "https://docs.espressif.com/projects/esp-idf/en/v5.1/esp32"
 
         await explorer.close()
 
@@ -92,12 +92,42 @@ class TestOnlineESPIDFExplorer:
     async def test_search_docs_basic(self, server_config, mock_html_content):
         """Test basic document search functionality."""
         # Mock HTTP responses
-        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/").mock(
+        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/esp32/").mock(
             return_value=httpx.Response(200, text=mock_html_content)
         )
-        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/").mock(
+        respx.get(
+            "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/"
+        ).mock(return_value=httpx.Response(200, text=mock_html_content))
+        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/").mock(
             return_value=httpx.Response(200, text=mock_html_content)
         )
+        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/").mock(
+            return_value=httpx.Response(200, text=mock_html_content)
+        )
+        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/").mock(
+            return_value=httpx.Response(200, text=mock_html_content)
+        )
+        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/esp32/security/").mock(
+            return_value=httpx.Response(200, text=mock_html_content)
+        )
+        respx.get(
+            "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/"
+        ).mock(return_value=httpx.Response(200, text=mock_html_content))
+        respx.get(
+            "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/wifi/"
+        ).mock(return_value=httpx.Response(200, text=mock_html_content))
+        respx.get(
+            "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/bluetooth/"
+        ).mock(return_value=httpx.Response(200, text=mock_html_content))
+        respx.get(
+            "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/"
+        ).mock(return_value=httpx.Response(200, text=mock_html_content))
+        respx.get(
+            "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/protocols/"
+        ).mock(return_value=httpx.Response(200, text=mock_html_content))
+        respx.get(
+            "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/"
+        ).mock(return_value=httpx.Response(200, text=mock_html_content))
 
         explorer = OnlineESPIDFExplorer(server_config)
 
@@ -134,7 +164,7 @@ class TestOnlineESPIDFExplorer:
     @respx.mock
     async def test_read_doc(self, server_config, mock_api_html):
         """Test reading a specific document."""
-        doc_url = "https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/wifi/"
+        doc_url = "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/wifi/"
 
         respx.get(doc_url).mock(return_value=httpx.Response(200, text=mock_api_html))
 
@@ -155,7 +185,7 @@ class TestOnlineESPIDFExplorer:
     async def test_read_doc_relative_url(self, server_config, mock_api_html):
         """Test reading document with relative URL."""
         relative_url = "api-reference/wifi/"
-        full_url = "https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/wifi/"
+        full_url = "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/wifi/"
 
         respx.get(full_url).mock(return_value=httpx.Response(200, text=mock_api_html))
 
@@ -172,7 +202,7 @@ class TestOnlineESPIDFExplorer:
     @respx.mock
     async def test_get_doc_structure(self, server_config, mock_html_content):
         """Test getting documentation structure."""
-        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest").mock(
+        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/esp32").mock(
             return_value=httpx.Response(200, text=mock_html_content)
         )
 
@@ -185,7 +215,7 @@ class TestOnlineESPIDFExplorer:
         assert result["metadata"]["version"] == "latest"
         assert (
             result["metadata"]["base_url"]
-            == "https://docs.espressif.com/projects/esp-idf/en/latest"
+            == "https://docs.espressif.com/projects/esp-idf/en/latest/esp32"
         )
 
         # Should find some sections
@@ -198,7 +228,7 @@ class TestOnlineESPIDFExplorer:
     @respx.mock
     async def test_find_api_references(self, server_config, mock_api_html):
         """Test finding API references."""
-        api_url = "https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/"
+        api_url = "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/"
 
         respx.get(api_url).mock(return_value=httpx.Response(200, text=mock_api_html))
 
@@ -216,7 +246,7 @@ class TestOnlineESPIDFExplorer:
     @respx.mock
     async def test_http_error_handling(self, server_config):
         """Test HTTP error handling."""
-        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/nonexistent").mock(
+        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/esp32/nonexistent").mock(
             return_value=httpx.Response(404, text="Not Found")
         )
 
@@ -285,7 +315,7 @@ class TestESPIDFDocsExplorer:
     @respx.mock
     async def test_get_doc_structure_wrapper(self, server_config, mock_html_content):
         """Test get doc structure through wrapper."""
-        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest").mock(
+        respx.get("https://docs.espressif.com/projects/esp-idf/en/latest/esp32").mock(
             return_value=httpx.Response(200, text=mock_html_content)
         )
 
@@ -303,7 +333,7 @@ class TestESPIDFDocsExplorer:
     async def test_read_doc_wrapper(self, server_config, mock_api_html):
         """Test read doc through wrapper."""
         doc_url = "api-reference/wifi/"
-        full_url = "https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/wifi/"
+        full_url = "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/wifi/"
 
         respx.get(full_url).mock(return_value=httpx.Response(200, text=mock_api_html))
 
@@ -320,7 +350,7 @@ class TestESPIDFDocsExplorer:
     @respx.mock
     async def test_find_api_references_wrapper(self, server_config, mock_api_html):
         """Test find API references through wrapper."""
-        api_url = "https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/"
+        api_url = "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/"
 
         respx.get(api_url).mock(return_value=httpx.Response(200, text=mock_api_html))
 

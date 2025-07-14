@@ -21,7 +21,8 @@ Add the following to your MCP client configuration (e.g., Claude Desktop):
       "command": "uvx",
       "args": ["esp-idf-docs-mcp"],
       "env": {
-        "ESP_IDF_VERSION": "latest"
+        "ESP_IDF_VERSION": "latest",
+        "ESP_IDF_CHIP_TARGET": "esp32s3"
       }
     }
   }
@@ -130,6 +131,9 @@ uv run pytest tests/test_minimal.py -v
 
 # Run tests with coverage (if coverage is installed)
 uv run pytest --cov=src/esp_idf_docs_mcp
+
+# Search document
+ESP_IDF_CHIP_TARGET=esp32s3 ESP_IDF_VERSION=latest uv run python test_search.py bluetooth
 ```
 
 ### Test Categories
