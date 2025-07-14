@@ -21,7 +21,7 @@ Add the following to your MCP client configuration (e.g., Claude Desktop):
       "command": "uvx",
       "args": ["esp-idf-docs-mcp"],
       "env": {
-        "ESP_IDF_VERSION": "latest"
+        "ESP_IDF_VERSION": "latest",
         "ESP_IDF_CHIP_TARGET": "esp32s3"
       }
     }
